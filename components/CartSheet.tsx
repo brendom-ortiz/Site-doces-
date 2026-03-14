@@ -8,12 +8,24 @@ interface Props {
   onClose: () => void;
   cart: CartItem[];
   whatsappNumber: string;
+  orderCounter: number;
+  incrementOrderCounter: () => void;
   updateQuantity: (id: string, delta: number) => void;
   removeFromCart: (id: string) => void;
   clearCart: () => void;
 }
 
-const CartSheet: React.FC<Props> = ({ isOpen, onClose, cart, whatsappNumber, updateQuantity, removeFromCart, clearCart }) => {
+const CartSheet: React.FC<Props> = ({ 
+  isOpen, 
+  onClose, 
+  cart, 
+  whatsappNumber, 
+  orderCounter,
+  incrementOrderCounter,
+  updateQuantity, 
+  removeFromCart, 
+  clearCart 
+}) => {
   const [customerName, setCustomerName] = useState('');
   const [customerAddress, setCustomerAddress] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('Pix');
@@ -35,8 +47,9 @@ const CartSheet: React.FC<Props> = ({ isOpen, onClose, cart, whatsappNumber, upd
     }
 
     const cleanNumber = whatsappNumber.replace(/\D/g, '');
+    const serialStr = orderCounter.toString().padStart(4, '0');
 
-    const header = `*✨ DOCE PALATO - NOVA COMANDA ✨*\n`;
+    const header = `*✨ DOCE PALATO - COMANDA #${serialStr} ✨*\n`;
     const customerInfo = `👤 *Cliente:* ${customerName}\n📍 *Endereço:* ${customerAddress}\n`;
     const paymentInfo = `💳 *Pagamento:* ${paymentMethod}${paymentMethod === 'Dinheiro' && changeFor ? ` (Troco para R$ ${changeFor})` : ''}\n`;
     
@@ -52,6 +65,7 @@ const CartSheet: React.FC<Props> = ({ isOpen, onClose, cart, whatsappNumber, upd
       ? `https://wa.me/${cleanNumber}?text=${encoded}`
       : `https://wa.me/?text=${encoded}`;
 
+    incrementOrderCounter();
     window.open(waUrl, '_blank');
   };
 
@@ -65,7 +79,10 @@ const CartSheet: React.FC<Props> = ({ isOpen, onClose, cart, whatsappNumber, upd
       <div className="relative w-full max-w-md bg-[#FFF5F7] h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
         <div className="p-6 border-b flex items-center justify-between bg-white">
           <div>
-            <h2 className="text-2xl font-bold text-emerald-900">Sua Comanda</h2>
+            <div className="flex items-center gap-2 mb-1">
+              <h2 className="text-2xl font-bold text-emerald-900">Sua Comanda</h2>
+              <span className="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-lg text-[10px] font-black">#{orderCounter.toString().padStart(4, '0')}</span>
+            </div>
             <p className="text-xs text-rose-400 font-medium uppercase tracking-wider">Finalize seu pedido doce</p>
           </div>
           <button onClick={onClose} className="p-2 hover:bg-rose-50 rounded-full text-rose-300 transition-colors">

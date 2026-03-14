@@ -50,6 +50,11 @@ const App: React.FC = () => {
     return saved ? JSON.parse(saved) : INITIAL_DATA;
   });
   
+  const [orderCounter, setOrderCounter] = useState<number>(() => {
+    const saved = localStorage.getItem('doce-palato-order-counter');
+    return saved ? parseInt(saved, 10) : 1;
+  });
+
   const [whatsappNumber, setWhatsappNumber] = useState<string>(() => {
     return localStorage.getItem('doce-palato-whatsapp') || '';
   });
@@ -73,6 +78,14 @@ const App: React.FC = () => {
   useEffect(() => {
     localStorage.setItem('doce-palato-whatsapp', whatsappNumber);
   }, [whatsappNumber]);
+
+  useEffect(() => {
+    localStorage.setItem('doce-palato-order-counter', orderCounter.toString());
+  }, [orderCounter]);
+
+  const incrementOrderCounter = () => {
+    setOrderCounter(prev => prev + 1);
+  };
 
   const activeSection = useMemo(() => 
     sections.find(s => s.id === activeCategoryId), 
@@ -284,6 +297,8 @@ const App: React.FC = () => {
         onClose={() => setIsCartOpen(false)} 
         cart={cart}
         whatsappNumber={whatsappNumber}
+        orderCounter={orderCounter}
+        incrementOrderCounter={incrementOrderCounter}
         updateQuantity={updateQuantity}
         removeFromCart={removeFromCart}
         clearCart={clearCart}
