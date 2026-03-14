@@ -411,7 +411,13 @@ const AdminPanel: React.FC<Props> = ({
                               <button onClick={() => setEditingSectionId(null)} className="text-rose-400"><X size={20} /></button>
                             </div>
                           ) : (
-                            <span className="font-bold text-emerald-800 truncate">{section.title}</span>
+                            <button 
+                              onClick={() => setActiveTab(section.id)}
+                              className="font-bold text-emerald-800 truncate hover:text-emerald-600 transition-colors flex items-center gap-2 group/title"
+                            >
+                              {section.title}
+                              <ChevronRight size={14} className="opacity-0 group-hover/title:opacity-100 transition-opacity" />
+                            </button>
                           )}
                           <div className="flex gap-1">
                             <button onClick={() => startRenaming(section)} className="p-1.5 text-rose-300 hover:text-rose-600"><Edit2 size={16} /></button>
@@ -424,6 +430,12 @@ const AdminPanel: React.FC<Props> = ({
                             className={`text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded flex items-center gap-1 transition-all ${section.isGallery ? 'bg-emerald-600 text-white' : 'bg-rose-100 text-rose-500'}`}
                            >
                               <Camera size={10} /> {section.isGallery ? 'Modo Exposição Ativo' : 'Mudar para Exposição'}
+                           </button>
+                           <button 
+                            onClick={() => setActiveTab(section.id)}
+                            className="text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition-all flex items-center gap-1"
+                           >
+                              <ListTree size={10} /> Gerenciar Produtos
                            </button>
                         </div>
                       </div>
@@ -470,6 +482,12 @@ const AdminPanel: React.FC<Props> = ({
           </div>
         ) : (
           <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
+             <button 
+               onClick={() => setActiveTab('config')}
+               className="flex items-center gap-2 text-rose-400 font-bold text-xs uppercase tracking-widest hover:text-rose-600 transition-colors mb-2"
+             >
+               <RefreshCcw size={14} className="rotate-180" /> Voltar para Geral
+             </button>
              <div className="flex justify-between items-center">
                 <div>
                   <h3 className="text-xl font-bold text-emerald-900">{activeSection?.title}</h3>
