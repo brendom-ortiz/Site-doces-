@@ -29,7 +29,7 @@ const LoginForm: React.FC<Props> = ({ adminCredentials, onLoginSuccess }) => {
           <Lock size={32} />
         </div>
         <h2 className="text-2xl font-bold text-emerald-900 tracking-tight">Admin</h2>
-        <p className="text-rose-400 text-sm font-medium">Controle total da Doce Palato</p>
+        <p className="text-rose-400 text-sm font-medium">Gestão do Atelier Gourmet</p>
       </div>
 
       <form onSubmit={handleLogin} className="space-y-5">

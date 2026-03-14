@@ -14,7 +14,7 @@ const INITIAL_DATA: Section[] = [
     id: '1',
     title: 'Brigadeiros Premium',
     items: [
-      { id: 'b1', name: 'Brigadeiro Belga', description: 'O clássico feito com chocolate Callebaut 54%.', price: 6.5, imageUrl: 'https://images.unsplash.com/photo-1599599810769-bcde5a160d32?auto=format&fit=crop&q=80&w=400' },
+      { id: 'b1', name: 'Brigadeiro Gourmet', description: 'O clássico feito com chocolate Callebaut 54%.', price: 6.5, imageUrl: 'https://images.unsplash.com/photo-1599599810769-bcde5a160d32?auto=format&fit=crop&q=80&w=400' },
       { id: 'b2', name: 'Ninho com Nutella', description: 'Massa cremosa de leite ninho com coração de avelã.', price: 7.5, imageUrl: 'https://images.unsplash.com/photo-1548365328-8c6db3220e4c?auto=format&fit=crop&q=80&w=400' }
     ]
   },
@@ -304,7 +304,7 @@ const App: React.FC = () => {
                   </div>
                   <div>
                     <h4 className="text-xl font-black text-emerald-900 mb-2">Qualidade Incomparável</h4>
-                    <p className="text-sm text-stone-600 font-medium">Utilizamos apenas os melhores chocolates belgas e ingredientes frescos para garantir que cada doce seja uma experiência única.</p>
+                    <p className="text-sm text-stone-600 font-medium">Utilizamos apenas os melhores chocolates e ingredientes frescos para garantir que cada doce seja uma experiência única.</p>
                   </div>
                 </div>
               </motion.div>
