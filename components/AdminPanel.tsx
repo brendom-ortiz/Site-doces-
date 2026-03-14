@@ -484,7 +484,7 @@ const AdminPanel: React.FC<Props> = ({
           <div className="bg-[#FFF5F7] w-full max-w-md rounded-[2.5rem] p-8 shadow-2xl animate-in slide-in-from-bottom-8 my-auto border border-white">
             <h3 className="text-2xl font-black mb-8 flex items-center gap-3 text-emerald-900">
                <div className="p-2 bg-rose-500 text-white rounded-xl shadow-lg"><Edit2 size={24} /></div>
-               {activeSection?.isGallery ? 'Item da Galeria' : 'Detalhes do Doce'}
+               {activeSection?.isGallery ? 'Item da Vitrine' : 'Detalhes do Doce'}
             </h3>
             
             <div className="space-y-4">

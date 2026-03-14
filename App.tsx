@@ -35,7 +35,7 @@ const INITIAL_DATA: Section[] = [
   },
   {
     id: 'gallery_unique',
-    title: 'Galeria de Arte',
+    title: 'Vitrine',
     isGallery: true,
     items: [
       { id: 'g1', name: 'Bolo de Casamento Floral', description: 'Design exclusivo com flores comestíveis.', price: 0, imageUrl: 'https://images.unsplash.com/photo-1535254973040-607b474cb8c2?auto=format&fit=crop&q=80&w=800' },
@@ -360,7 +360,7 @@ const App: React.FC = () => {
                       
                       {activeSection.items.length > 0 ? (
                         activeSection.isGallery ? (
-                          /* Layout de Galeria/Exposição */
+                          /* Layout de Vitrine/Exposição */
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                             {activeSection.items.map(item => (
                               <div key={item.id} className="group relative bg-white rounded-[2.5rem] overflow-hidden shadow-xl border border-rose-50 transition-all duration-500 hover:-translate-y-2">
@@ -442,8 +442,8 @@ const App: React.FC = () => {
                 onClick={() => setActiveCategoryId(gallerySection.id)}
                 className={`flex-1 flex flex-col items-center py-2 rounded-3xl transition-all duration-300 ${activeCategoryId === gallerySection.id ? 'bg-rose-500 text-white shadow-lg shadow-rose-200' : 'text-stone-400 hover:text-rose-400'}`}
               >
-                <Camera size={20} />
-                <span className="text-[9px] font-black uppercase mt-1">Galeria</span>
+                <LayoutGrid size={20} />
+                <span className="text-[9px] font-black uppercase mt-1">Vitrine</span>
               </button>
             )}
 
@@ -460,15 +460,6 @@ const App: React.FC = () => {
               )}
             </button>
 
-            <div className="w-[1px] h-8 bg-stone-100 mx-1"></div>
-
-            <button 
-              onClick={() => setIsAdminOpen(true)}
-              className="flex-1 flex flex-col items-center py-2 rounded-3xl text-stone-400 hover:text-emerald-400"
-            >
-              <Settings size={20} />
-              <span className="text-[9px] font-black uppercase mt-1">Admin</span>
-            </button>
           </div>
         </div>
       )}
