@@ -285,7 +285,7 @@ const App: React.FC = () => {
                         className="group relative h-48 rounded-[2.5rem] overflow-hidden shadow-xl border border-rose-50"
                       >
                         <img 
-                          src={section.items[0]?.imageUrl || 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&q=80&w=400'} 
+                          src={section.imageUrl || section.items[0]?.imageUrl || 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&q=80&w=400'} 
                           alt={section.title}
                           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                         />
@@ -423,7 +423,7 @@ const App: React.FC = () => {
             
             <button 
               onClick={() => {
-                if (activeCategoryId === 'home' && menuSections.length > 0) {
+                if (menuSections.length > 0) {
                   setActiveCategoryId(menuSections[0].id);
                 }
               }}

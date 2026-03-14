@@ -40,8 +40,10 @@ const AdminPanel: React.FC<Props> = ({
   const [newAdminUsername, setNewAdminUsername] = useState(adminCredentials.username);
   const [newAdminPassword, setNewAdminPassword] = useState(adminCredentials.password);
   const [isSavingCreds, setIsSavingCreds] = useState(false);
+  const [uploadingSectionId, setUploadingSectionId] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const sectionImageInputRef = useRef<HTMLInputElement>(null);
   const importFileRef = useRef<HTMLInputElement>(null);
 
   const handleExportData = () => {
@@ -137,6 +139,18 @@ const AdminPanel: React.FC<Props> = ({
           ...editingSweet,
           sweet: { ...editingSweet.sweet!, imageUrl: reader.result as string }
         });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSectionImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && uploadingSectionId) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSections(prev => prev.map(s => s.id === uploadingSectionId ? { ...s, imageUrl: reader.result as string } : s));
+        setUploadingSectionId(null);
       };
       reader.readAsDataURL(file);
     }
@@ -364,39 +378,59 @@ const AdminPanel: React.FC<Props> = ({
               <div className="grid gap-2">
                 {sections.map(section => (
                   <div key={section.id} className="flex flex-col p-3 bg-rose-50/30 rounded-xl border border-rose-100/50">
-                    <div className="flex items-center justify-between">
-                      {editingSectionId === section.id ? (
-                        <div className="flex gap-2 flex-grow">
-                          <input 
-                            autoFocus
-                            className="bg-white px-3 py-1.5 rounded-lg outline-none text-emerald-900 font-bold border border-emerald-100 w-full"
-                            value={tempSectionTitle}
-                            onChange={e => setTempSectionTitle(e.target.value)}
-                          />
-                          <button onClick={saveSectionName} className="text-emerald-600"><Check size={20} /></button>
-                          <button onClick={() => setEditingSectionId(null)} className="text-rose-400"><X size={20} /></button>
+                    <div className="flex items-center gap-3 mb-2">
+                      <div 
+                        className="w-12 h-12 rounded-lg overflow-hidden bg-white border border-rose-100 relative group cursor-pointer shrink-0"
+                        onClick={() => {
+                          setUploadingSectionId(section.id);
+                          sectionImageInputRef.current?.click();
+                        }}
+                      >
+                        {section.imageUrl ? (
+                          <img src={section.imageUrl} className="w-full h-full object-cover" alt="" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-rose-200">
+                            <Camera size={20} />
+                          </div>
+                        )}
+                        <div className="absolute inset-0 bg-emerald-900/40 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                          <Upload size={14} />
                         </div>
-                      ) : (
-                        <span className="font-bold text-emerald-800">{section.title}</span>
-                      )}
-                      <div className="flex gap-1">
-                        <button onClick={() => startRenaming(section)} className="p-1.5 text-rose-300 hover:text-rose-600"><Edit2 size={16} /></button>
-                        <button onClick={() => deleteSection(section.id)} className="p-1.5 text-rose-200 hover:text-rose-600"><Trash2 size={16} /></button>
                       </div>
-                    </div>
-                    <div className="mt-2 flex items-center gap-2">
-                       <button 
-                        onClick={() => toggleGalleryMode(section.id)}
-                        className={`text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded flex items-center gap-1 transition-all ${section.isGallery ? 'bg-emerald-600 text-white' : 'bg-rose-100 text-rose-500'}`}
-                       >
-                          <Camera size={10} /> {section.isGallery ? 'Modo Exposição Ativo' : 'Mudar para Exposição'}
-                       </button>
-                       <span className="text-[8px] text-stone-400 italic">
-                         {section.isGallery ? '* Itens nesta aba não podem ser comprados' : '* Itens de venda normal'}
-                       </span>
+                      <div className="flex-grow min-w-0">
+                        <div className="flex items-center justify-between">
+                          {editingSectionId === section.id ? (
+                            <div className="flex gap-2 flex-grow">
+                              <input 
+                                autoFocus
+                                className="bg-white px-3 py-1.5 rounded-lg outline-none text-emerald-900 font-bold border border-emerald-100 w-full"
+                                value={tempSectionTitle}
+                                onChange={e => setTempSectionTitle(e.target.value)}
+                              />
+                              <button onClick={saveSectionName} className="text-emerald-600"><Check size={20} /></button>
+                              <button onClick={() => setEditingSectionId(null)} className="text-rose-400"><X size={20} /></button>
+                            </div>
+                          ) : (
+                            <span className="font-bold text-emerald-800 truncate">{section.title}</span>
+                          )}
+                          <div className="flex gap-1">
+                            <button onClick={() => startRenaming(section)} className="p-1.5 text-rose-300 hover:text-rose-600"><Edit2 size={16} /></button>
+                            <button onClick={() => deleteSection(section.id)} className="p-1.5 text-rose-200 hover:text-rose-600"><Trash2 size={16} /></button>
+                          </div>
+                        </div>
+                        <div className="mt-1 flex items-center gap-2">
+                           <button 
+                            onClick={() => toggleGalleryMode(section.id)}
+                            className={`text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded flex items-center gap-1 transition-all ${section.isGallery ? 'bg-emerald-600 text-white' : 'bg-rose-100 text-rose-500'}`}
+                           >
+                              <Camera size={10} /> {section.isGallery ? 'Modo Exposição Ativo' : 'Mudar para Exposição'}
+                           </button>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 ))}
+                <input type="file" ref={sectionImageInputRef} className="hidden" accept="image/*" onChange={handleSectionImageChange} />
 
                 {isAddingSection ? (
                   <div className="flex gap-2 p-3 bg-emerald-50 rounded-xl border border-emerald-100 animate-in zoom-in-95">
