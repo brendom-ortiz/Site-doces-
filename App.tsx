@@ -64,6 +64,11 @@ const App: React.FC = () => {
     return localStorage.getItem('doce-palato-whatsapp') || '';
   });
 
+  const [adminCredentials, setAdminCredentials] = useState(() => {
+    const saved = localStorage.getItem('doce-palato-admin-creds');
+    return saved ? JSON.parse(saved) : { username: 'docepalato', password: '2314' };
+  });
+
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -91,6 +96,10 @@ const App: React.FC = () => {
   useEffect(() => {
     localStorage.setItem('doce-palato-sales-history', JSON.stringify(salesHistory));
   }, [salesHistory]);
+
+  useEffect(() => {
+    localStorage.setItem('doce-palato-admin-creds', JSON.stringify(adminCredentials));
+  }, [adminCredentials]);
 
   const incrementOrderCounter = () => {
     setOrderCounter(prev => prev + 1);
@@ -204,10 +213,15 @@ const App: React.FC = () => {
               orderCounter={orderCounter}
               resetOrderCounter={resetOrderCounter}
               salesHistory={salesHistory}
+              adminCredentials={adminCredentials}
+              setAdminCredentials={setAdminCredentials}
               onClose={() => setIsAdminOpen(false)} 
             />
           ) : (
-            <LoginForm onLoginSuccess={() => setIsLoggedIn(true)} />
+            <LoginForm 
+              adminCredentials={adminCredentials}
+              onLoginSuccess={() => setIsLoggedIn(true)} 
+            />
           )
         ) : (
           <div className="space-y-10">

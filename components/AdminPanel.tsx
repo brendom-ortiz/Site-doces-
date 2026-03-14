@@ -1,6 +1,6 @@
 
 import React, { useState, useRef } from 'react';
-import { Plus, Trash2, Edit2, Check, X, Wand2, Upload, LayoutGrid, ListTree, ChevronRight, Phone, Download, Database, RefreshCcw, Camera, History, TrendingUp } from 'lucide-react';
+import { Plus, Trash2, Edit2, Check, X, Wand2, Upload, LayoutGrid, ListTree, ChevronRight, Phone, Download, Database, RefreshCcw, Camera, History, TrendingUp, Lock } from 'lucide-react';
 import { Section, Sweet } from '../types';
 import { GoogleGenAI } from "@google/genai";
 
@@ -12,6 +12,8 @@ interface Props {
   orderCounter: number;
   resetOrderCounter: () => void;
   salesHistory: { id: string; timestamp: string; total: number }[];
+  adminCredentials: { username: string; password: string };
+  setAdminCredentials: (creds: { username: string; password: string }) => void;
   onClose: () => void;
 }
 
@@ -23,6 +25,8 @@ const AdminPanel: React.FC<Props> = ({
   orderCounter,
   resetOrderCounter,
   salesHistory,
+  adminCredentials,
+  setAdminCredentials,
   onClose 
 }) => {
   const [activeTab, setActiveTab] = useState<string>('config'); 
@@ -32,6 +36,11 @@ const AdminPanel: React.FC<Props> = ({
   const [tempSectionTitle, setTempSectionTitle] = useState('');
   const [editingSweet, setEditingSweet] = useState<{ sectionId: string, sweet: Sweet | null }>({ sectionId: '', sweet: null });
   const [isGenerating, setIsGenerating] = useState(false);
+  
+  const [newAdminUsername, setNewAdminUsername] = useState(adminCredentials.username);
+  const [newAdminPassword, setNewAdminPassword] = useState(adminCredentials.password);
+  const [isSavingCreds, setIsSavingCreds] = useState(false);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const importFileRef = useRef<HTMLInputElement>(null);
 
@@ -289,6 +298,51 @@ const AdminPanel: React.FC<Props> = ({
                   className="bg-rose-100 text-rose-600 px-4 py-2 rounded-xl text-xs font-bold hover:bg-rose-200 transition-colors"
                 >
                   Zerar Fila
+                </button>
+              </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-[2rem] border border-emerald-50 shadow-sm space-y-4">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 bg-emerald-50 text-emerald-700 rounded-xl">
+                   <Lock size={20} />
+                </div>
+                <div>
+                  <h4 className="font-bold text-emerald-900">Acesso Administrativo</h4>
+                  <p className="text-[10px] text-emerald-600 font-bold uppercase">Mudar login e senha</p>
+                </div>
+              </div>
+              
+              <div className="space-y-3">
+                <div>
+                  <label className="text-[10px] font-black text-emerald-800 uppercase ml-1 block mb-1">Novo Usuário</label>
+                  <input 
+                    className="w-full bg-emerald-50/30 border border-emerald-100 rounded-xl px-4 py-2 outline-none focus:ring-2 ring-emerald-100 text-emerald-900 font-bold text-sm"
+                    value={newAdminUsername}
+                    onChange={e => setNewAdminUsername(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] font-black text-emerald-800 uppercase ml-1 block mb-1">Nova Senha</label>
+                  <input 
+                    type="password"
+                    className="w-full bg-emerald-50/30 border border-emerald-100 rounded-xl px-4 py-2 outline-none focus:ring-2 ring-emerald-100 text-emerald-900 text-sm"
+                    value={newAdminPassword}
+                    onChange={e => setNewAdminPassword(e.target.value)}
+                  />
+                </div>
+                <button 
+                  onClick={() => {
+                    if (confirm('Deseja realmente alterar as credenciais de acesso?')) {
+                      setAdminCredentials({ username: newAdminUsername, password: newAdminPassword });
+                      setIsSavingCreds(true);
+                      setTimeout(() => setIsSavingCreds(false), 2000);
+                    }
+                  }}
+                  className="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl hover:bg-emerald-700 transition-all text-xs uppercase tracking-widest flex items-center justify-center gap-2"
+                >
+                  {isSavingCreds ? <Check size={16} /> : <RefreshCcw size={16} />}
+                  {isSavingCreds ? 'Credenciais Salvas!' : 'Atualizar Acesso'}
                 </button>
               </div>
             </div>

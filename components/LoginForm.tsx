@@ -3,17 +3,18 @@ import React, { useState } from 'react';
 import { Lock, User, AlertCircle } from 'lucide-react';
 
 interface Props {
+  adminCredentials: { username: string; password: string };
   onLoginSuccess: () => void;
 }
 
-const LoginForm: React.FC<Props> = ({ onLoginSuccess }) => {
+const LoginForm: React.FC<Props> = ({ adminCredentials, onLoginSuccess }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (username === 'docepalato' && password === '2314') {
+    if (username === adminCredentials.username && password === adminCredentials.password) {
       onLoginSuccess();
     } else {
       setError('Acesso negado.');
