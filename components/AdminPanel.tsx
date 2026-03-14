@@ -167,44 +167,47 @@ const AdminPanel: React.FC<Props> = ({
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
-      <div className="flex items-center justify-between border-b border-rose-100 pb-4">
-        <div>
-          <h2 className="text-2xl font-bold text-emerald-900">Configurações</h2>
-          <p className="text-xs text-rose-400 font-bold uppercase tracking-widest">Painel Administrativo</p>
+      <div className="flex items-center justify-between border-b border-rose-100 pb-4 gap-4">
+        <div className="min-w-0">
+          <h2 className="text-2xl font-bold text-emerald-900 truncate">Configurações</h2>
+          <p className="text-xs text-rose-400 font-bold uppercase tracking-widest truncate">Painel Administrativo</p>
         </div>
-        <button onClick={onClose} className="p-2 hover:bg-rose-50 rounded-full text-rose-300 transition-colors">
+        <button onClick={onClose} className="p-2 hover:bg-rose-50 rounded-full text-rose-300 transition-colors shrink-0">
           <X size={24} />
         </button>
       </div>
 
-      <div className="flex overflow-x-auto pb-2 gap-2 no-scrollbar">
-        <button 
-          onClick={() => setActiveTab('config')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap text-sm font-bold transition-all border-2 ${
-            activeTab === 'config' ? 'bg-emerald-600 text-white border-emerald-600 shadow-md' : 'bg-white text-emerald-700 border-emerald-50 hover:border-rose-200'
-          }`}
-        >
-          <ListTree size={16} /> Geral
-        </button>
-        <button 
-          onClick={() => setActiveTab('history')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap text-sm font-bold transition-all border-2 ${
-            activeTab === 'history' ? 'bg-rose-500 text-white border-rose-500 shadow-md' : 'bg-white text-rose-700 border-rose-50 hover:border-emerald-200'
-          }`}
-        >
-          <History size={16} /> Histórico
-        </button>
-        {sections.map(s => (
+      <div className="relative group">
+        <div className="flex overflow-x-auto pb-4 gap-2 scroll-smooth px-1 touch-pan-x no-scrollbar">
           <button 
-            key={s.id}
-            onClick={() => setActiveTab(s.id)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap text-sm font-bold transition-all border-2 ${
-              activeTab === s.id ? 'bg-rose-500 text-white border-rose-500 shadow-md' : 'bg-white text-rose-700 border-rose-50 hover:border-emerald-200'
+            onClick={() => setActiveTab('config')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap text-sm font-bold transition-all border-2 shrink-0 ${
+              activeTab === 'config' ? 'bg-emerald-600 text-white border-emerald-600 shadow-md' : 'bg-white text-emerald-700 border-emerald-50 hover:border-rose-200'
             }`}
           >
-            <LayoutGrid size={16} /> {s.title}
+            <ListTree size={16} /> Geral
           </button>
-        ))}
+          <button 
+            onClick={() => setActiveTab('history')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap text-sm font-bold transition-all border-2 shrink-0 ${
+              activeTab === 'history' ? 'bg-rose-500 text-white border-rose-500 shadow-md' : 'bg-white text-rose-700 border-rose-50 hover:border-emerald-200'
+            }`}
+          >
+            <History size={16} /> Histórico
+          </button>
+          {sections.map(s => (
+            <button 
+              key={s.id}
+              onClick={() => setActiveTab(s.id)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap text-sm font-bold transition-all border-2 shrink-0 ${
+                activeTab === s.id ? 'bg-rose-500 text-white border-rose-500 shadow-md' : 'bg-white text-rose-700 border-rose-50 hover:border-emerald-200'
+              }`}
+            >
+              <LayoutGrid size={16} /> {s.title}
+            </button>
+          ))}
+        </div>
+        <div className="absolute right-0 top-0 bottom-4 w-12 bg-gradient-to-l from-[#FFF5F7] to-transparent pointer-events-none" />
       </div>
 
       <div className="min-h-[400px]">
