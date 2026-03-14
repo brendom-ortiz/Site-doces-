@@ -290,10 +290,6 @@ const App: React.FC = () => {
                           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/80 via-emerald-900/20 to-transparent flex flex-col justify-end p-6 text-left">
-                          <div className="flex items-center gap-2 mb-1">
-                            <Sparkles size={16} className="text-rose-300" />
-                            <span className="text-[10px] font-black uppercase tracking-widest text-rose-200">Categoria {idx + 1}</span>
-                          </div>
                           <h4 className="text-xl font-black text-white">{section.title}</h4>
                         </div>
                       </motion.button>
