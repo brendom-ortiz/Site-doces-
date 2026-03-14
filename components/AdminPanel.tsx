@@ -1,6 +1,6 @@
 
 import React, { useState, useRef } from 'react';
-import { Plus, Trash2, Edit2, Check, X, Wand2, Upload, LayoutGrid, ListTree, ChevronRight, Phone, Download, Database, RefreshCcw, Camera } from 'lucide-react';
+import { Plus, Trash2, Edit2, Check, X, Wand2, Upload, LayoutGrid, ListTree, ChevronRight, Phone, Download, Database, RefreshCcw, Camera, History, TrendingUp } from 'lucide-react';
 import { Section, Sweet } from '../types';
 import { GoogleGenAI } from "@google/genai";
 
@@ -9,10 +9,22 @@ interface Props {
   setSections: React.Dispatch<React.SetStateAction<Section[]>>;
   whatsappNumber: string;
   setWhatsappNumber: (val: string) => void;
+  orderCounter: number;
+  resetOrderCounter: () => void;
+  salesHistory: { id: string; timestamp: string; total: number }[];
   onClose: () => void;
 }
 
-const AdminPanel: React.FC<Props> = ({ sections, setSections, whatsappNumber, setWhatsappNumber, onClose }) => {
+const AdminPanel: React.FC<Props> = ({ 
+  sections, 
+  setSections, 
+  whatsappNumber, 
+  setWhatsappNumber, 
+  orderCounter,
+  resetOrderCounter,
+  salesHistory,
+  onClose 
+}) => {
   const [activeTab, setActiveTab] = useState<string>('config'); 
   const [isAddingSection, setIsAddingSection] = useState(false);
   const [newSectionTitle, setNewSectionTitle] = useState('');
@@ -165,6 +177,14 @@ const AdminPanel: React.FC<Props> = ({ sections, setSections, whatsappNumber, se
         >
           <ListTree size={16} /> Geral
         </button>
+        <button 
+          onClick={() => setActiveTab('history')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap text-sm font-bold transition-all border-2 ${
+            activeTab === 'history' ? 'bg-rose-500 text-white border-rose-500 shadow-md' : 'bg-white text-rose-700 border-rose-50 hover:border-emerald-200'
+          }`}
+        >
+          <History size={16} /> Histórico
+        </button>
         {sections.map(s => (
           <button 
             key={s.id}
@@ -179,7 +199,60 @@ const AdminPanel: React.FC<Props> = ({ sections, setSections, whatsappNumber, se
       </div>
 
       <div className="min-h-[400px]">
-        {activeTab === 'config' ? (
+        {activeTab === 'history' ? (
+          <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
+            <div className="grid grid-cols-2 gap-4">
+              {[
+                { label: 'Hoje', period: 'day' },
+                { label: 'Semana', period: 'week' },
+                { label: 'Mês', period: 'month' },
+                { label: 'Ano', period: 'year' }
+              ].map(({ label, period }) => {
+                const now = new Date();
+                const total = salesHistory.filter(sale => {
+                  const saleDate = new Date(sale.timestamp);
+                  if (period === 'day') return saleDate.toDateString() === now.toDateString();
+                  if (period === 'week') {
+                    const diff = now.getTime() - saleDate.getTime();
+                    return diff < 7 * 24 * 60 * 60 * 1000;
+                  }
+                  if (period === 'month') return saleDate.getMonth() === now.getMonth() && saleDate.getFullYear() === now.getFullYear();
+                  if (period === 'year') return saleDate.getFullYear() === now.getFullYear();
+                  return false;
+                }).reduce((acc, s) => acc + s.total, 0);
+
+                return (
+                  <div key={period} className="bg-white p-5 rounded-3xl border border-rose-50 shadow-sm">
+                    <p className="text-[10px] font-black text-rose-400 uppercase tracking-widest mb-1">{label}</p>
+                    <p className="text-xl font-black text-emerald-900">R$ {total.toFixed(2)}</p>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="bg-white p-6 rounded-[3rem] border border-emerald-50 shadow-sm">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2 bg-emerald-50 text-emerald-600 rounded-xl"><TrendingUp size={20} /></div>
+                <h4 className="font-bold text-emerald-900">Últimos Pedidos</h4>
+              </div>
+              <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2 no-scrollbar">
+                {salesHistory.length === 0 ? (
+                  <p className="text-center py-8 text-rose-200 font-bold italic">Nenhum pedido registrado ainda.</p>
+                ) : (
+                  [...salesHistory].reverse().map(sale => (
+                    <div key={sale.id} className="flex justify-between items-center p-3 bg-rose-50/30 rounded-2xl border border-rose-100/50">
+                      <div>
+                        <p className="text-xs font-bold text-emerald-900">{new Date(sale.timestamp).toLocaleString()}</p>
+                        <p className="text-[10px] text-rose-400 font-bold uppercase">ID: {sale.id.slice(-6)}</p>
+                      </div>
+                      <p className="font-black text-emerald-700">R$ {sale.total.toFixed(2)}</p>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+        ) : activeTab === 'config' ? (
           <div className="space-y-8 animate-in fade-in slide-in-from-left-4">
             
             <div className="bg-white p-6 rounded-[2rem] border border-rose-50 shadow-sm space-y-4">
@@ -198,6 +271,26 @@ const AdminPanel: React.FC<Props> = ({ sections, setSections, whatsappNumber, se
                 value={whatsappNumber}
                 onChange={e => setWhatsappNumber(e.target.value)}
               />
+            </div>
+
+            <div className="bg-white p-6 rounded-[2rem] border border-rose-50 shadow-sm space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-rose-50 text-rose-500 rounded-xl">
+                    <RefreshCcw size={20} />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-emerald-900">Contador de Comandas</h4>
+                    <p className="text-[10px] text-rose-400 font-bold uppercase">Número atual: #{orderCounter.toString().padStart(4, '0')}</p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => confirm('Zerar a fila de comandas e voltar para #0001?') && resetOrderCounter()}
+                  className="bg-rose-100 text-rose-600 px-4 py-2 rounded-xl text-xs font-bold hover:bg-rose-200 transition-colors"
+                >
+                  Zerar Fila
+                </button>
+              </div>
             </div>
 
             <div className="bg-white p-6 rounded-[2rem] border border-emerald-50 shadow-sm space-y-4">

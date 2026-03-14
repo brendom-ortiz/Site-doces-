@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { X, Minus, Plus, Trash2, Send, User, MessageSquare, MapPin, CreditCard, ShoppingBag } from 'lucide-react';
+import { X, Minus, Plus, Trash2, Send, User, MessageSquare, MapPin, CreditCard, ShoppingBag, Calendar, Clock } from 'lucide-react';
 import { CartItem } from '../types';
 
 interface Props {
@@ -10,6 +10,7 @@ interface Props {
   whatsappNumber: string;
   orderCounter: number;
   incrementOrderCounter: () => void;
+  recordSale: (total: number) => void;
   updateQuantity: (id: string, delta: number) => void;
   removeFromCart: (id: string) => void;
   clearCart: () => void;
@@ -22,6 +23,7 @@ const CartSheet: React.FC<Props> = ({
   whatsappNumber, 
   orderCounter,
   incrementOrderCounter,
+  recordSale,
   updateQuantity, 
   removeFromCart, 
   clearCart 
@@ -29,6 +31,8 @@ const CartSheet: React.FC<Props> = ({
   const [customerName, setCustomerName] = useState('');
   const [customerAddress, setCustomerAddress] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('Pix');
+  const [deliveryType, setDeliveryType] = useState<'today' | 'pre-order'>('today');
+  const [deliveryDate, setDeliveryDate] = useState('');
   const [changeFor, setChangeFor] = useState('');
   const [notes, setNotes] = useState('');
 
@@ -45,12 +49,17 @@ const CartSheet: React.FC<Props> = ({
       alert('Por favor, informe o endereço de entrega.');
       return;
     }
+    if (deliveryType === 'pre-order' && !deliveryDate) {
+      alert('Por favor, escolha uma data para a encomenda.');
+      return;
+    }
 
     const cleanNumber = whatsappNumber.replace(/\D/g, '');
     const serialStr = orderCounter.toString().padStart(4, '0');
 
     const header = `*✨ DOCE PALATO - COMANDA #${serialStr} ✨*\n`;
     const customerInfo = `👤 *Cliente:* ${customerName}\n📍 *Endereço:* ${customerAddress}\n`;
+    const deliveryInfo = `📅 *Entrega:* ${deliveryType === 'today' ? 'Para hoje' : `Encomenda para ${deliveryDate}`}\n`;
     const paymentInfo = `💳 *Pagamento:* ${paymentMethod}${paymentMethod === 'Dinheiro' && changeFor ? ` (Troco para R$ ${changeFor})` : ''}\n`;
     
     const itemsList = cart.map(item => `• ${item.quantity}x ${item.name} (R$ ${(item.price * item.quantity).toFixed(2)})`).join('\n');
@@ -58,7 +67,7 @@ const CartSheet: React.FC<Props> = ({
     const obs = notes.trim() ? `\n📝 *Observações:* ${notes}` : '';
     const footer = `\n\n💰 *TOTAL DO PEDIDO: R$ ${total.toFixed(2)}*`;
     
-    const message = `${header}\n${customerInfo}${paymentInfo}${obs}\n*Itens:*\n${itemsList}${footer}`;
+    const message = `${header}\n${customerInfo}${deliveryInfo}${paymentInfo}${obs}\n*Itens:*\n${itemsList}${footer}`;
     const encoded = encodeURIComponent(message);
     
     const waUrl = cleanNumber 
@@ -66,6 +75,7 @@ const CartSheet: React.FC<Props> = ({
       : `https://wa.me/?text=${encoded}`;
 
     incrementOrderCounter();
+    recordSale(total);
     window.open(waUrl, '_blank');
   };
 
@@ -154,6 +164,48 @@ const CartSheet: React.FC<Props> = ({
                     value={customerAddress}
                     onChange={e => setCustomerAddress(e.target.value)}
                   />
+                </div>
+
+                <div className="space-y-3">
+                  <label className="text-xs font-bold text-emerald-600 uppercase ml-1 flex items-center gap-2 mb-1">
+                    <Clock size={14} /> Quando deseja receber?
+                  </label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      onClick={() => setDeliveryType('today')}
+                      className={`flex flex-col items-center justify-center p-3 rounded-2xl border-2 transition-all ${
+                        deliveryType === 'today'
+                        ? 'bg-emerald-50 border-emerald-500 text-emerald-700 shadow-sm'
+                        : 'bg-white border-rose-100 text-rose-300 hover:border-rose-200'
+                      }`}
+                    >
+                      <Clock size={18} className="mb-1" />
+                      <span className="text-[10px] font-bold uppercase">Para Hoje</span>
+                    </button>
+                    <button
+                      onClick={() => setDeliveryType('pre-order')}
+                      className={`flex flex-col items-center justify-center p-3 rounded-2xl border-2 transition-all ${
+                        deliveryType === 'pre-order'
+                        ? 'bg-emerald-50 border-emerald-500 text-emerald-700 shadow-sm'
+                        : 'bg-white border-rose-100 text-rose-300 hover:border-rose-200'
+                      }`}
+                    >
+                      <Calendar size={18} className="mb-1" />
+                      <span className="text-[10px] font-bold uppercase">Encomendar</span>
+                    </button>
+                  </div>
+
+                  {deliveryType === 'pre-order' && (
+                    <div className="animate-in fade-in slide-in-from-top-2">
+                      <input 
+                        type="date"
+                        className="w-full bg-white border border-rose-200 rounded-xl px-4 py-3 outline-none focus:ring-2 ring-rose-200 text-emerald-900 transition-all text-sm shadow-sm"
+                        value={deliveryDate}
+                        onChange={e => setDeliveryDate(e.target.value)}
+                        min={new Date().toISOString().split('T')[0]}
+                      />
+                    </div>
+                  )}
                 </div>
 
                 <div>

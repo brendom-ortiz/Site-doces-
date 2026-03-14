@@ -55,6 +55,11 @@ const App: React.FC = () => {
     return saved ? parseInt(saved, 10) : 1;
   });
 
+  const [salesHistory, setSalesHistory] = useState<{ id: string; timestamp: string; total: number }[]>(() => {
+    const saved = localStorage.getItem('doce-palato-sales-history');
+    return saved ? JSON.parse(saved) : [];
+  });
+
   const [whatsappNumber, setWhatsappNumber] = useState<string>(() => {
     return localStorage.getItem('doce-palato-whatsapp') || '';
   });
@@ -83,8 +88,25 @@ const App: React.FC = () => {
     localStorage.setItem('doce-palato-order-counter', orderCounter.toString());
   }, [orderCounter]);
 
+  useEffect(() => {
+    localStorage.setItem('doce-palato-sales-history', JSON.stringify(salesHistory));
+  }, [salesHistory]);
+
   const incrementOrderCounter = () => {
     setOrderCounter(prev => prev + 1);
+  };
+
+  const resetOrderCounter = () => {
+    setOrderCounter(1);
+  };
+
+  const recordSale = (total: number) => {
+    const newSale = {
+      id: Date.now().toString(),
+      timestamp: new Date().toISOString(),
+      total
+    };
+    setSalesHistory(prev => [...prev, newSale]);
   };
 
   const activeSection = useMemo(() => 
@@ -179,6 +201,9 @@ const App: React.FC = () => {
               setSections={setSections} 
               whatsappNumber={whatsappNumber}
               setWhatsappNumber={setWhatsappNumber}
+              orderCounter={orderCounter}
+              resetOrderCounter={resetOrderCounter}
+              salesHistory={salesHistory}
               onClose={() => setIsAdminOpen(false)} 
             />
           ) : (
@@ -299,6 +324,7 @@ const App: React.FC = () => {
         whatsappNumber={whatsappNumber}
         orderCounter={orderCounter}
         incrementOrderCounter={incrementOrderCounter}
+        recordSale={recordSale}
         updateQuantity={updateQuantity}
         removeFromCart={removeFromCart}
         clearCart={clearCart}
