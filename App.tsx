@@ -100,6 +100,10 @@ const App: React.FC = () => {
     localStorage.setItem('doce-palato-admin-creds', JSON.stringify(adminCredentials));
   }, [adminCredentials]);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [activeCategoryId]);
+
   const incrementOrderCounter = () => {
     setOrderCounter(prev => prev + 1);
   };
