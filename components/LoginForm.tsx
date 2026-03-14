@@ -28,7 +28,7 @@ const LoginForm: React.FC<Props> = ({ adminCredentials, onLoginSuccess }) => {
         <div className="w-16 h-16 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center mb-4 border border-rose-100">
           <Lock size={32} />
         </div>
-        <h2 className="text-2xl font-bold text-emerald-900 tracking-tight">Portal Atelier</h2>
+        <h2 className="text-2xl font-bold text-emerald-900 tracking-tight">Admin</h2>
         <p className="text-rose-400 text-sm font-medium">Controle total da Doce Palato</p>
       </div>
 

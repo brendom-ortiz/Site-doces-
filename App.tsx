@@ -463,7 +463,7 @@ const App: React.FC = () => {
               className="flex-1 flex flex-col items-center py-2 rounded-3xl text-stone-400 hover:text-emerald-400"
             >
               <Settings size={20} />
-              <span className="text-[9px] font-black uppercase mt-1">Painel</span>
+              <span className="text-[9px] font-black uppercase mt-1">Admin</span>
             </button>
           </div>
         </div>
