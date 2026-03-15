@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { ShoppingBag, Settings, LogOut, ChevronRight, Sparkles, Camera, Heart, Home, LayoutGrid, Star } from 'lucide-react';
+import { ShoppingBag, Settings, LogOut, ChevronRight, Sparkles, Camera, Heart, Home, LayoutGrid, Star, Phone, X, Plus } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Section, Sweet, CartItem } from './types';
 import BrigadeiroLogo from './components/BrigadeiroLogo';
@@ -75,6 +75,7 @@ const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [activeCategoryId, setActiveCategoryId] = useState<string>('home');
+  const [selectedGalleryItem, setSelectedGalleryItem] = useState<Sweet | null>(null);
 
   useEffect(() => {
     // No longer auto-setting to first section, default is 'home'
@@ -356,26 +357,40 @@ const App: React.FC = () => {
                       
                       {activeSection.items.length > 0 ? (
                         activeSection.isGallery ? (
-                          /* Layout de Vitrine/Exposição */
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            {activeSection.items.map(item => (
-                              <div key={item.id} className="group relative bg-white rounded-[2.5rem] overflow-hidden shadow-xl border border-rose-50 transition-all duration-500 hover:-translate-y-2">
-                                <div className="aspect-[4/5] overflow-hidden">
-                                  <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
-                                </div>
-                                <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8 text-white">
-                                   <div className="flex items-center gap-2 mb-2">
-                                      <Heart size={18} className="fill-rose-500 text-rose-500" />
-                                      <span className="text-[10px] font-black uppercase tracking-widest text-rose-200">Inspiração Premium</span>
+                          /* Layout de Vitrine/Exposição Interativo */
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {activeSection.items.map((item, idx) => (
+                              <motion.div 
+                                key={item.id}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: idx * 0.1 }}
+                                onClick={() => setSelectedGalleryItem(item)}
+                                className="group relative aspect-square rounded-[2.5rem] overflow-hidden shadow-xl border border-rose-50 cursor-zoom-in"
+                              >
+                                <img 
+                                  src={item.imageUrl} 
+                                  alt={item.name} 
+                                  className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/90 via-emerald-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-6">
+                                   <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                                     <div className="flex items-center gap-2 mb-2">
+                                        <div className="p-1.5 bg-rose-500 rounded-lg text-white">
+                                          <Camera size={14} />
+                                        </div>
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-rose-200">Inspiração</span>
+                                     </div>
+                                     <h4 className="text-xl font-black text-white mb-1">{item.name}</h4>
+                                     <p className="text-xs text-white/70 line-clamp-2 font-medium">{item.description}</p>
                                    </div>
-                                   <h4 className="text-2xl font-black mb-1">{item.name}</h4>
-                                   <p className="text-sm opacity-80 line-clamp-2">{item.description}</p>
                                 </div>
-                                <div className="p-6 md:hidden">
-                                   <h4 className="text-xl font-black text-emerald-900 mb-1">{item.name}</h4>
-                                   <p className="text-xs text-stone-500">{item.description}</p>
+                                
+                                {/* Badge de Zoom no Hover */}
+                                <div className="absolute top-4 right-4 p-2 bg-white/20 backdrop-blur-md rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                  <Plus size={20} />
                                 </div>
-                              </div>
+                              </motion.div>
                             ))}
                           </div>
                         ) : (
@@ -482,6 +497,75 @@ const App: React.FC = () => {
           <p className="text-rose-300 text-[10px] font-medium italic">Sempre uma experiência inesquecível.</p>
         </footer>
       )}
+      <AnimatePresence>
+        {selectedGalleryItem && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-emerald-950/95 backdrop-blur-xl flex items-center justify-center p-4 md:p-8"
+            onClick={() => setSelectedGalleryItem(null)}
+          >
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative w-full max-w-5xl bg-white rounded-[3rem] overflow-hidden shadow-2xl flex flex-col md:flex-row"
+              onClick={e => e.stopPropagation()}
+            >
+              <button 
+                onClick={() => setSelectedGalleryItem(null)}
+                className="absolute top-6 right-6 z-10 p-3 bg-black/20 hover:bg-black/40 text-white rounded-full backdrop-blur-md transition-all"
+              >
+                <X size={24} />
+              </button>
+
+              <div className="w-full md:w-3/5 aspect-square md:aspect-auto h-full bg-stone-100">
+                <img 
+                  src={selectedGalleryItem.imageUrl} 
+                  alt={selectedGalleryItem.name} 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+
+              <div className="w-full md:w-2/5 p-8 md:p-12 flex flex-col justify-center bg-white">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-3 bg-rose-50 text-rose-500 rounded-2xl">
+                    <Sparkles size={24} />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black text-rose-400 uppercase tracking-[0.2em]">Vitrine de Inspiração</p>
+                    <h3 className="text-3xl font-black text-emerald-900 leading-tight">{selectedGalleryItem.name}</h3>
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  <p className="text-stone-600 leading-relaxed font-medium">
+                    {selectedGalleryItem.description || "Uma criação exclusiva Doce Palato, feita com os melhores ingredientes para tornar seu momento inesquecível."}
+                  </p>
+
+                  <div className="pt-8 border-t border-rose-50">
+                    <button 
+                      onClick={() => {
+                        const text = `Olá! Vi este doce na vitrine e amei: ${selectedGalleryItem.name}. Gostaria de saber mais informações!`;
+                        window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(text)}`, '_blank');
+                      }}
+                      className="w-full bg-emerald-600 text-white font-black py-5 rounded-2xl shadow-xl shadow-emerald-100 hover:bg-emerald-700 transition-all flex items-center justify-center gap-3 group"
+                    >
+                      <Phone size={20} />
+                      SOLICITAR ORÇAMENTO
+                      <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                    </button>
+                    <p className="text-center mt-4 text-[10px] text-stone-400 font-bold uppercase tracking-widest">
+                      * Item exclusivo sob encomenda
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
