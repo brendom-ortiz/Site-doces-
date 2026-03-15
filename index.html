@@ -12,6 +12,9 @@
         body {
             font-family: 'Quicksand', sans-serif;
             background-color: #FFF5F7; /* Pale Rose Background */
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
         .font-logo {
             font-family: 'Pacifico', cursive;
@@ -22,6 +25,15 @@
         .no-scrollbar {
             -ms-overflow-style: none;
             scrollbar-width: none;
+        }
+        /* Chrome Backdrop Filter Fixes */
+        .backdrop-blur-xl, .backdrop-blur-lg, .backdrop-blur-md, .backdrop-blur-2xl {
+            -webkit-backdrop-filter: blur(var(--tw-backdrop-blur));
+        }
+        /* Hardware acceleration for sticky/fixed elements to prevent jitter in Chrome */
+        .sticky, .fixed {
+            transform: translateZ(0);
+            will-change: transform;
         }
     </style>
 <script type="importmap">

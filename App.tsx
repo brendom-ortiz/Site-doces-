@@ -66,8 +66,8 @@ const App: React.FC = () => {
   });
 
   const [adminCredentials, setAdminCredentials] = useState(() => {
-    const saved = localStorage.getItem('doce-palato-admin-creds');
-    return saved ? JSON.parse(saved) : { username: 'docepalato', password: '2314' };
+    const saved = localStorage.getItem('doce-palato-admin-creds-v2');
+    return saved ? JSON.parse(saved) : { username: 'admin', password: '123' };
   });
 
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -76,6 +76,12 @@ const App: React.FC = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [activeCategoryId, setActiveCategoryId] = useState<string>('home');
   const [selectedGalleryItem, setSelectedGalleryItem] = useState<Sweet | null>(null);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+
+  const showToast = (message: string, type: 'success' | 'error' = 'success') => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3000);
+  };
 
   useEffect(() => {
     // No longer auto-setting to first section, default is 'home'
@@ -98,7 +104,7 @@ const App: React.FC = () => {
   }, [salesHistory]);
 
   useEffect(() => {
-    localStorage.setItem('doce-palato-admin-creds', JSON.stringify(adminCredentials));
+    localStorage.setItem('doce-palato-admin-creds-v2', JSON.stringify(adminCredentials));
   }, [adminCredentials]);
 
   useEffect(() => {
@@ -216,7 +222,7 @@ const App: React.FC = () => {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 md:px-6 py-8 pb-32 space-y-12">
+      <main className="max-w-4xl mx-auto px-4 md:px-6 py-8 pb-32 space-y-12 overflow-x-hidden">
         {isAdminOpen ? (
           isLoggedIn ? (
             <AdminPanel 
@@ -230,6 +236,7 @@ const App: React.FC = () => {
               adminCredentials={adminCredentials}
               setAdminCredentials={setAdminCredentials}
               onClose={() => setIsAdminOpen(false)} 
+              showToast={showToast}
             />
           ) : (
             <LoginForm 
@@ -319,7 +326,7 @@ const App: React.FC = () => {
               >
                 {/* Categorias (Tabs) - Only show for non-gallery sections */}
                 {activeSection && !activeSection.isGallery && (
-                  <div className="sticky top-20 z-30 -mx-4 px-4 py-4 bg-[#FFF5F7]/90 backdrop-blur-lg border-b border-rose-50">
+                  <div className="sticky top-[70px] z-30 -mx-4 px-4 py-4 bg-[#FFF5F7]/90 backdrop-blur-lg border-b border-rose-50">
                     <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2">
                       {menuSections.map(section => (
                         <button
@@ -488,7 +495,27 @@ const App: React.FC = () => {
         updateQuantity={updateQuantity}
         removeFromCart={removeFromCart}
         clearCart={clearCart}
+        showToast={showToast}
       />
+
+      {/* Toast Notification */}
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, x: '-50%' }}
+            animate={{ opacity: 1, y: 0, x: '-50%' }}
+            exit={{ opacity: 0, y: 20, x: '-50%' }}
+            className={`fixed bottom-24 left-1/2 z-[200] px-6 py-3 rounded-2xl shadow-2xl font-bold text-sm flex items-center gap-3 border backdrop-blur-md ${
+              toast.type === 'success' 
+              ? 'bg-emerald-500/90 text-white border-emerald-400' 
+              : 'bg-rose-500/90 text-white border-rose-400'
+            }`}
+          >
+            {toast.type === 'success' ? <Check size={18} /> : <X size={18} />}
+            {toast.message}
+          </motion.div>
+        )}
+      </AnimatePresence>
       
       {!isAdminOpen && (
         <footer className="mt-20 py-12 px-4 text-center border-t border-rose-100 bg-white/50">

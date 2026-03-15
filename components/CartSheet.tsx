@@ -14,6 +14,7 @@ interface Props {
   updateQuantity: (id: string, delta: number) => void;
   removeFromCart: (id: string) => void;
   clearCart: () => void;
+  showToast: (msg: string, type?: 'success' | 'error') => void;
 }
 
 const CartSheet: React.FC<Props> = ({ 
@@ -26,7 +27,8 @@ const CartSheet: React.FC<Props> = ({
   recordSale,
   updateQuantity, 
   removeFromCart, 
-  clearCart 
+  clearCart,
+  showToast
 }) => {
   const [customerName, setCustomerName] = useState('');
   const [customerAddress, setCustomerAddress] = useState('');
@@ -42,15 +44,15 @@ const CartSheet: React.FC<Props> = ({
 
   const sendToWhatsApp = () => {
     if (!customerName.trim()) {
-      alert('Por favor, informe seu nome.');
+      showToast('Por favor, informe seu nome.', 'error');
       return;
     }
     if (!customerAddress.trim()) {
-      alert('Por favor, informe o endereço de entrega.');
+      showToast('Por favor, informe o endereço de entrega.', 'error');
       return;
     }
     if (deliveryType === 'pre-order' && !deliveryDate) {
-      alert('Por favor, escolha uma data para a encomenda.');
+      showToast('Por favor, escolha uma data para a encomenda.', 'error');
       return;
     }
 

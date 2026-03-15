@@ -15,6 +15,7 @@ interface Props {
   adminCredentials: { username: string; password: string };
   setAdminCredentials: (creds: { username: string; password: string }) => void;
   onClose: () => void;
+  showToast: (msg: string, type?: 'success' | 'error') => void;
 }
 
 const AdminPanel: React.FC<Props> = ({ 
@@ -27,7 +28,8 @@ const AdminPanel: React.FC<Props> = ({
   salesHistory,
   adminCredentials,
   setAdminCredentials,
-  onClose 
+  onClose,
+  showToast
 }) => {
   const [activeTab, setActiveTab] = useState<string>('config'); 
   const [isAddingSection, setIsAddingSection] = useState(false);
@@ -68,9 +70,12 @@ const AdminPanel: React.FC<Props> = ({
           if (confirm('Deseja substituir o cardápio atual?')) {
             setSections(json.sections);
             setWhatsappNumber(json.whatsappNumber);
+            showToast('Dados importados com sucesso!');
           }
         }
-      } catch (err) { alert('Erro ao ler arquivo'); }
+      } catch (err) { 
+        showToast('Erro ao ler arquivo. Verifique o formato.', 'error'); 
+      }
     };
     reader.readAsText(file);
   };
@@ -353,6 +358,7 @@ const AdminPanel: React.FC<Props> = ({
                     if (confirm('Deseja realmente alterar as credenciais de acesso?')) {
                       setAdminCredentials({ username: newAdminUsername, password: newAdminPassword });
                       setIsSavingCreds(true);
+                      showToast('Credenciais atualizadas!');
                       setTimeout(() => setIsSavingCreds(false), 2000);
                     }
                   }}
