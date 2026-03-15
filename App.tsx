@@ -318,32 +318,24 @@ const App: React.FC = () => {
               </motion.div>
             ) : (
               <motion.div 
-                key="category"
+                key={activeCategoryId}
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 className="space-y-10"
               >
-                {/* Categorias (Tabs) - Only show for non-gallery sections */}
-                {activeSection && !activeSection.isGallery && (
-                  <div className="sticky top-[70px] z-30 -mx-4 px-4 py-4 bg-[#FFF5F7]/90 backdrop-blur-lg border-b border-rose-50">
-                    <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2">
-                      {menuSections.map(section => (
-                        <button
-                          key={section.id}
-                          onClick={() => {
-                            setActiveCategoryId(section.id);
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                          }}
-                          className={`px-6 py-2.5 rounded-full whitespace-nowrap text-xs font-black uppercase tracking-widest transition-all duration-500 border-2 ${
-                            activeCategoryId === section.id
-                            ? 'bg-rose-500 text-white border-rose-500 shadow-xl shadow-rose-200 scale-105'
-                            : 'bg-white text-emerald-800 border-emerald-50 hover:border-rose-200'
-                          }`}
-                        >
-                          {section.title}
-                        </button>
-                      ))}
+                {/* Cabeçalho da Categoria com Botão Voltar */}
+                {activeSection && (
+                  <div className="flex items-center gap-4 mb-2">
+                    <button 
+                      onClick={() => setActiveCategoryId('home')}
+                      className="p-3 bg-white text-rose-500 rounded-2xl shadow-sm border border-rose-50 hover:bg-rose-50 transition-all group"
+                    >
+                      <LayoutGrid size={20} className="group-hover:rotate-90 transition-transform duration-500" />
+                    </button>
+                    <div>
+                      <p className="text-[10px] font-black text-rose-400 uppercase tracking-[0.2em] ml-1">Você está em</p>
+                      <h3 className="text-3xl font-black text-emerald-900 tracking-tight leading-none">{activeSection.title}</h3>
                     </div>
                   </div>
                 )}
@@ -352,10 +344,7 @@ const App: React.FC = () => {
                 <div className="animate-in fade-in slide-in-from-bottom-6 duration-700">
                   {activeSection ? (
                     <div className="space-y-8">
-                       <div className="flex items-center gap-4">
-                        <h3 className="text-3xl font-black text-emerald-900 tracking-tight">{activeSection.title}</h3>
-                        <div className="flex-grow h-[2px] bg-gradient-to-r from-emerald-100 to-transparent"></div>
-                      </div>
+                      <div className="h-[2px] bg-gradient-to-r from-emerald-100 via-rose-100 to-transparent"></div>
                       
                       {activeSection.items.length > 0 ? (
                         activeSection.isGallery ? (
@@ -443,7 +432,10 @@ const App: React.FC = () => {
             
             <button 
               onClick={() => {
-                if (menuSections.length > 0) {
+                if (activeCategoryId !== 'home' && activeCategoryId !== gallerySection?.id) {
+                  // If already in a menu section, just scroll to top
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else if (menuSections.length > 0) {
                   setActiveCategoryId(menuSections[0].id);
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
@@ -518,12 +510,86 @@ const App: React.FC = () => {
       </AnimatePresence>
       
       {!isAdminOpen && (
-        <footer className="mt-20 py-12 px-4 text-center border-t border-rose-100 bg-white/50">
-          <BrigadeiroLogo size={40} />
-          <p className="text-emerald-800 text-[11px] font-bold uppercase tracking-[0.3em] mt-4 mb-2">
-            Doce Palato • Gourmet
-          </p>
-          <p className="text-rose-300 text-[10px] font-medium italic">Sempre uma experiência inesquecível.</p>
+        <footer className="mt-20 py-16 px-6 border-t border-rose-100 bg-white">
+          <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div className="text-center md:text-left space-y-4">
+              <div className="flex items-center justify-center md:justify-start gap-3">
+                <BrigadeiroLogo size={32} />
+                <h4 className="font-logo text-lg text-emerald-800">Doce Palato</h4>
+              </div>
+              <p className="text-xs text-stone-500 font-medium leading-relaxed">
+                Transformando momentos simples em memórias doces e inesquecíveis através da alta confeitaria artesanal.
+              </p>
+              <div className="flex items-center justify-center md:justify-start gap-4">
+                <button className="p-2 bg-rose-50 text-rose-500 rounded-full hover:bg-rose-100 transition-colors">
+                  <Heart size={16} fill="currentColor" />
+                </button>
+                <button 
+                  onClick={() => whatsappNumber && window.open(`https://wa.me/${whatsappNumber.replace(/\D/g, '')}`, '_blank')}
+                  className="p-2 bg-emerald-50 text-emerald-600 rounded-full hover:bg-emerald-100 transition-colors"
+                >
+                  <Phone size={16} />
+                </button>
+              </div>
+            </div>
+
+            <div className="text-center md:text-left">
+              <h5 className="text-[10px] font-black text-emerald-900 uppercase tracking-[0.2em] mb-6">Navegação</h5>
+              <ul className="space-y-3">
+                <li>
+                  <button 
+                    onClick={() => setActiveCategoryId('home')}
+                    className="text-xs text-stone-600 hover:text-rose-500 font-bold transition-colors uppercase tracking-widest"
+                  >
+                    Início
+                  </button>
+                </li>
+                {menuSections.map(section => (
+                  <li key={section.id}>
+                    <button 
+                      onClick={() => setActiveCategoryId(section.id)}
+                      className="text-xs text-stone-600 hover:text-rose-500 font-bold transition-colors uppercase tracking-widest"
+                    >
+                      {section.title}
+                    </button>
+                  </li>
+                ))}
+                {gallerySection && (
+                  <li>
+                    <button 
+                      onClick={() => setActiveCategoryId(gallerySection.id)}
+                      className="text-xs text-stone-600 hover:text-rose-500 font-bold transition-colors uppercase tracking-widest"
+                    >
+                      {gallerySection.title}
+                    </button>
+                  </li>
+                )}
+              </ul>
+            </div>
+
+            <div className="text-center md:text-left">
+              <h5 className="text-[10px] font-black text-emerald-900 uppercase tracking-[0.2em] mb-6">Contato</h5>
+              <div className="space-y-4">
+                <div className="flex items-center justify-center md:justify-start gap-3 text-stone-600">
+                  <Phone size={14} className="text-rose-400" />
+                  <span className="text-xs font-bold">{whatsappNumber || '(00) 00000-0000'}</span>
+                </div>
+                <div className="pt-4">
+                  <p className="text-[9px] text-stone-400 font-black uppercase tracking-widest leading-loose">
+                    Atendimento Online<br />
+                    Segunda a Sábado<br />
+                    09:00 às 18:00
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="mt-16 pt-8 border-t border-rose-50 text-center">
+            <p className="text-[9px] text-stone-400 font-bold uppercase tracking-[0.3em]">
+              © {new Date().getFullYear()} Doce Palato • Todos os direitos reservados
+            </p>
+          </div>
         </footer>
       )}
       <AnimatePresence>
