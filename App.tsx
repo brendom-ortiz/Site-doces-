@@ -319,26 +319,21 @@ const App: React.FC = () => {
               >
                 {/* Categorias (Tabs) - Only show for non-gallery sections */}
                 {activeSection && !activeSection.isGallery && (
-                  <div className="sticky top-20 z-30 -mx-4 px-4 py-4 bg-[#FFF5F7]/80 backdrop-blur-md">
+                  <div className="sticky top-20 z-30 -mx-4 px-4 py-4 bg-[#FFF5F7]/90 backdrop-blur-lg border-b border-rose-50">
                     <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2">
-                      <button
-                        onClick={() => setActiveCategoryId('home')}
-                        className="px-6 py-3 rounded-2xl whitespace-nowrap text-sm font-bold transition-all duration-300 border-2 flex items-center gap-2 bg-white text-emerald-700 border-rose-100 hover:border-emerald-200"
-                      >
-                        <Home size={16} className="text-emerald-400" />
-                        Início
-                      </button>
                       {menuSections.map(section => (
                         <button
                           key={section.id}
-                          onClick={() => setActiveCategoryId(section.id)}
-                          className={`px-6 py-3 rounded-2xl whitespace-nowrap text-sm font-bold transition-all duration-300 border-2 flex items-center gap-2 ${
+                          onClick={() => {
+                            setActiveCategoryId(section.id);
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                          }}
+                          className={`px-6 py-2.5 rounded-full whitespace-nowrap text-xs font-black uppercase tracking-widest transition-all duration-500 border-2 ${
                             activeCategoryId === section.id
-                            ? 'bg-rose-500 text-white border-rose-500 shadow-lg shadow-rose-200 scale-105'
-                            : 'bg-white text-emerald-700 border-rose-100 hover:border-emerald-200'
+                            ? 'bg-rose-500 text-white border-rose-500 shadow-xl shadow-rose-200 scale-105'
+                            : 'bg-white text-emerald-800 border-emerald-50 hover:border-rose-200'
                           }`}
                         >
-                          {section.title === 'Eventos & Casamentos' && <Sparkles size={16} className={activeCategoryId === section.id ? 'text-rose-100' : 'text-emerald-400'} />}
                           {section.title}
                         </button>
                       ))}
@@ -426,46 +421,53 @@ const App: React.FC = () => {
 
       {/* Bottom Navigation (Mobile/Interactive) */}
       {!isAdminOpen && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-md z-50">
-          <div className="bg-white/80 backdrop-blur-xl border border-white/50 rounded-[2.5rem] p-2 shadow-2xl shadow-rose-200/50 flex items-center justify-between">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-md z-50">
+          <div className="bg-emerald-950/90 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] p-1.5 shadow-2xl shadow-emerald-950/20 flex items-center justify-between">
             <button 
-              onClick={() => setActiveCategoryId('home')}
-              className={`flex-1 flex flex-col items-center py-2 rounded-3xl transition-all duration-300 ${activeCategoryId === 'home' ? 'bg-rose-500 text-white shadow-lg shadow-rose-200' : 'text-stone-400 hover:text-rose-400'}`}
+              onClick={() => {
+                setActiveCategoryId('home');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className={`flex-1 flex flex-col items-center py-3 rounded-[2rem] transition-all duration-500 ${activeCategoryId === 'home' ? 'bg-white text-emerald-900 shadow-xl scale-105' : 'text-white/40 hover:text-white/80'}`}
             >
-              <Home size={20} />
-              <span className="text-[9px] font-black uppercase mt-1">Início</span>
+              <Home size={18} />
+              <span className="text-[8px] font-black uppercase tracking-widest mt-1.5">Início</span>
             </button>
             
             <button 
               onClick={() => {
                 if (menuSections.length > 0) {
                   setActiveCategoryId(menuSections[0].id);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
               }}
-              className={`flex-1 flex flex-col items-center py-2 rounded-3xl transition-all duration-300 ${activeCategoryId !== 'home' && activeCategoryId !== gallerySection?.id ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-100' : 'text-stone-400 hover:text-emerald-400'}`}
+              className={`flex-1 flex flex-col items-center py-3 rounded-[2rem] transition-all duration-500 ${activeCategoryId !== 'home' && activeCategoryId !== gallerySection?.id ? 'bg-rose-500 text-white shadow-xl scale-105' : 'text-white/40 hover:text-white/80'}`}
             >
-              <LayoutGrid size={20} />
-              <span className="text-[9px] font-black uppercase mt-1">Menu</span>
+              <Sparkles size={18} />
+              <span className="text-[8px] font-black uppercase tracking-widest mt-1.5">Menu</span>
             </button>
 
             {gallerySection && (
               <button 
-                onClick={() => setActiveCategoryId(gallerySection.id)}
-                className={`flex-1 flex flex-col items-center py-2 rounded-3xl transition-all duration-300 ${activeCategoryId === gallerySection.id ? 'bg-rose-500 text-white shadow-lg shadow-rose-200' : 'text-stone-400 hover:text-rose-400'}`}
+                onClick={() => {
+                  setActiveCategoryId(gallerySection.id);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className={`flex-1 flex flex-col items-center py-3 rounded-[2rem] transition-all duration-500 ${activeCategoryId === gallerySection.id ? 'bg-emerald-500 text-white shadow-xl scale-105' : 'text-white/40 hover:text-white/80'}`}
               >
-                <LayoutGrid size={20} />
-                <span className="text-[9px] font-black uppercase mt-1">Vitrine</span>
+                <Camera size={18} />
+                <span className="text-[8px] font-black uppercase tracking-widest mt-1.5">Vitrine</span>
               </button>
             )}
 
             <button 
               onClick={() => setIsCartOpen(true)}
-              className="flex-1 flex flex-col items-center py-2 rounded-3xl text-stone-400 hover:text-rose-400 relative"
+              className="flex-1 flex flex-col items-center py-3 rounded-[2rem] text-white/40 hover:text-white/80 relative transition-all duration-300"
             >
-              <ShoppingBag size={20} />
-              <span className="text-[9px] font-black uppercase mt-1">Sacola</span>
+              <ShoppingBag size={18} />
+              <span className="text-[8px] font-black uppercase tracking-widest mt-1.5">Sacola</span>
               {cart.length > 0 && (
-                <span className="absolute top-1 right-4 bg-rose-500 text-white text-[8px] font-black w-4 h-4 flex items-center justify-center rounded-full border border-white">
+                <span className="absolute top-2 right-4 bg-rose-500 text-white text-[8px] font-black w-4 h-4 flex items-center justify-center rounded-full border border-emerald-950">
                   {cart.reduce((acc, item) => acc + item.quantity, 0)}
                 </span>
               )}
